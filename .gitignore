@@ -28,3 +28,6 @@ yarn-error.log*
 
 # Optional: local deploy scripts
 scripts/local/
+
+#ignition
+ignition/
