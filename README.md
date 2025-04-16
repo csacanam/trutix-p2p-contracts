@@ -1,134 +1,104 @@
-# Trutix P2P – Smart Contracts
+# Trutix P2P – Contracts
 
-**Trustless P2P Ticket Trading**  
-Smart contracts for escrowed ticket sales using USDC on the Base network.
+**Smart contract infrastructure for secure, trustless P2P ticket trades using USDC.**
 
----
-
-## 📦 Stack
-
-- [Hardhat](https://hardhat.org/)
-- Solidity `^0.8.20`
-- Ethers.js / Viem
-- Base (Testnet + Mainnet)
+Trutix P2P is a decentralized protocol that enables buyers and sellers to trade event tickets directly, without intermediaries. This repository contains the core smart contract logic for handling escrow, disputes, expirations, and fee distribution.
 
 ---
 
-## 📁 Project Structure
+## ✨ Features
 
-```
-trutix-contracts/
-│
-├── contracts/           # Smart contracts (e.g. TradeEscrow.sol)
-├── deploy/              # Deployment scripts (optional)
-├── scripts/             # Interaction/testing scripts
-├── test/                # Unit and flow tests
-├── hardhat.config.ts    # Hardhat config
-└── .env                 # Environment variables (not committed)
-```
+- ⛓️ **USDC-based escrow:** Safe, stable, and predictable payments.
+- 🤝 **Trustless trade flow:** Funds are locked until both parties confirm the transaction.
+- ⏱️ **Auto-expiration logic:** Ensures trades can't stall indefinitely.
+- ⚖️ **Dispute resolution:** Buyers can open disputes; admins resolve them on-chain.
+- 📤 **Fee mechanics:** Protocol fees are split between buyers and sellers and claimable by the owner.
+- 🔐 **Reentrancy protection:** Hardened against typical smart contract vulnerabilities.
 
 ---
 
-## 🚀 Setup
+## ⚙️ Smart Contract Overview
 
-1. Clone the repo
-
-```bash
-git clone https://github.com/csacanam/trutix-p2p-contracts.git
-cd trutix-contracts
+```solidity
+contract TradeEscrow is ReentrancyGuard
 ```
 
-2. Install dependencies
+### Key Struct
 
-```bash
-yarn
+```solidity
+struct Trade {
+  address seller;
+  address buyer;
+  uint256 amount;
+  uint256 sellerFee;
+  uint256 buyerFee;
+  uint256 createdAt;
+  uint256 paidAt;
+  uint256 sentAt;
+  TradeStatus status;
+}
 ```
 
-3. Create `.env` file
+### Status Lifecycle
 
-```bash
-cp .env.example .env
-```
-
-Fill in the following:
-
-```dotenv
-PRIVATE_KEY=your_wallet_private_key
-BASE_RPC_URL=https://base-goerli.blockpi.network/v1/rpc/public
-ETHERSCAN_API_KEY=your_key_if_needed
-```
+- `Created` → `Paid` → `Sent` → `Completed`
+- or → `Expired` / `Refunded` / `Dispute`
 
 ---
 
-## 📜 Scripts
+## 🚀 Trade Flow
 
-### Compile contracts
+1. **Seller creates a trade**, defining price and generating a shareable link.
+2. **Buyer pays** via USDC (+fee), and funds are held in escrow.
+3. **Seller marks as "Sent"** when tickets are transferred off-chain.
+4. **Buyer confirms** reception → seller is paid.
+5. If no response in 12h → auto-complete.
+6. If buyer didn't receive tickets → can open **Dispute**, frozen until admin resolves.
+
+---
+
+## 🧾 Fees
+
+- Seller fee and buyer fee (default: 5% each) are configurable.
+- Platform accumulates fees and owner can withdraw them via `withdrawFees()`.
+
+---
+
+## 🔐 Security
+
+- Uses `ReentrancyGuard` from OpenZeppelin to prevent attack vectors.
+- Expiration and payout functions are permissionless but time-gated.
+- Disputed trades cannot be manipulated until manually resolved.
+
+---
+
+## 📦 Installation
+
+To test locally with [Hardhat](https://hardhat.org):
 
 ```bash
+git clone https://github.com/csacanam/trutix-p2p-contracts
+cd trutix-p2p-contracts
+npm install
 npx hardhat compile
 ```
 
-### Run local tests
+---
 
-```bash
-npx hardhat test
-```
+## 📁 File Structure
 
-### Deploy to Base Goerli
-
-```bash
-npx hardhat run scripts/deploy.ts --network baseGoerli
-```
+- `/contracts/TradeEscrow.sol` – main contract
+- `/scripts/` – deploy scripts (optional)
+- `/test/` – test suite (WIP)
 
 ---
 
-## 📡 Network Config (example)
+## 📜 License
 
-In `hardhat.config.ts`:
-
-```ts
-networks: {
-  baseGoerli: {
-    url: process.env.BASE_RPC_URL,
-    accounts: [process.env.PRIVATE_KEY!]
-  }
-},
-```
+MIT © [Trutix LLC](https://trutix.io)
 
 ---
 
-## 🔐 Contracts
+## 🤝 Contact
 
-### `TradeEscrow.sol`
-
-Main escrow contract that holds buyer funds until ticket delivery is confirmed.
-
-Functions include:
-
-- `createTrade()`
-- `pay()`
-- `markSent()`
-- `markReceived()`
-- `pauseTrade()` (admin)
-
----
-
-## ✅ TODO
-
-- [ ] Finalize `Trade` struct and enums
-- [ ] Implement and test all contract functions
-- [ ] Add events and emit in each flow
-- [ ] Add timeout/dispute logic
-- [ ] Mainnet deployment script
-
----
-
-## 🛠 Author
-
-- Backend & Smart Contracts: [Camilo Sacanamboy](https://github.com/csacanam)
-
----
-
-## 📝 License
-
-MIT
+For questions, disputes or collaboration opportunities, reach out via [@camilosaka](https://twitter.com/camilosaka)
