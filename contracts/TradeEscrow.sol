@@ -156,7 +156,11 @@ contract TradeEscrow is ReentrancyGuard {
         uint256 tradeId
     ) external onlyBuyer(tradeId) nonReentrant {
         Trade storage trade = trades[tradeId];
-        require(trade.status == TradeStatus.Sent, "Ticket not marked as sent");
+        require(
+            trade.status == TradeStatus.Sent ||
+                trade.status == TradeStatus.Dispute,
+            "Ticket not marked as sent"
+        );
 
         (, uint256 sellerReceives, uint256 totalFee) = calculateFees(
             trade.amount,
@@ -186,7 +190,8 @@ contract TradeEscrow is ReentrancyGuard {
 
         require(
             trade.status == TradeStatus.Created ||
-                trade.status == TradeStatus.Paid,
+                trade.status == TradeStatus.Paid ||
+                trade.status == TradeStatus.Sent,
             "Trade not expirable"
         );
 

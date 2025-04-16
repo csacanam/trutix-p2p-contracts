@@ -14,6 +14,7 @@ Trutix P2P is a decentralized protocol that enables buyers and sellers to trade 
 - ⚖️ **Dispute resolution:** Buyers can open disputes; admins resolve them on-chain.
 - 📤 **Fee mechanics:** Protocol fees are split between buyers and sellers and claimable by the owner.
 - 🔐 **Reentrancy protection:** Hardened against typical smart contract vulnerabilities.
+- 🧪 **Complete test coverage:** Trade flow, edge cases, and all expiration/dispute logic tested.
 
 ---
 
@@ -64,6 +65,26 @@ struct Trade {
 
 ---
 
+## 🧪 Test Coverage
+
+The project includes a full suite of tests using Hardhat and Mocha:
+
+- ✅ Trade full lifecycle (create → pay → send → confirm)
+- ✅ Buyer can confirm reception even after dispute
+- ✅ Admin can resolve dispute in favor of buyer or seller
+- ✅ Auto-expire if not paid in 12h
+- ✅ Refund buyer if paid but not sent in 12h
+- ✅ Auto-complete if not confirmed in 12h
+- ✅ Owner can withdraw accumulated protocol fees
+
+Run tests with:
+
+```bash
+npx hardhat test
+```
+
+---
+
 ## 🔐 Security
 
 - Uses `ReentrancyGuard` from OpenZeppelin to prevent attack vectors.
@@ -88,8 +109,8 @@ npx hardhat compile
 ## 📁 File Structure
 
 - `/contracts/TradeEscrow.sol` – main contract
-- `/scripts/` – deploy scripts (optional)
-- `/test/` – test suite (WIP)
+- `/contracts/MockUSDC.sol` – test token used for unit testing
+- `/test/TradeEscrow.test.js` – full test suite
 
 ---
 
