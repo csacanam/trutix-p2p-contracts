@@ -14,7 +14,6 @@ Trutix P2P is a decentralized protocol that enables buyers and sellers to trade 
 - ⚖️ **Dispute resolution:** Buyers can open disputes; admins resolve them on-chain.
 - 📤 **Fee mechanics:** Protocol fees are split between buyers and sellers and claimable by the owner.
 - 🔐 **Reentrancy protection:** Hardened against typical smart contract vulnerabilities.
-- 🧪 **Complete test coverage:** Trade flow, edge cases, and all expiration/dispute logic tested.
 
 ---
 
@@ -65,26 +64,6 @@ struct Trade {
 
 ---
 
-## 🧪 Test Coverage
-
-The project includes a full suite of tests using Hardhat and Mocha:
-
-- ✅ Trade full lifecycle (create → pay → send → confirm)
-- ✅ Buyer can confirm reception even after dispute
-- ✅ Admin can resolve dispute in favor of buyer or seller
-- ✅ Auto-expire if not paid in 12h
-- ✅ Refund buyer if paid but not sent in 12h
-- ✅ Auto-complete if not confirmed in 12h
-- ✅ Owner can withdraw accumulated protocol fees
-
-Run tests with:
-
-```bash
-npx hardhat test
-```
-
----
-
 ## 🔐 Security
 
 - Uses `ReentrancyGuard` from OpenZeppelin to prevent attack vectors.
@@ -93,9 +72,7 @@ npx hardhat test
 
 ---
 
-## 📦 Installation
-
-To test locally with [Hardhat](https://hardhat.org):
+## 📦 Installation & Compilation
 
 ```bash
 git clone https://github.com/csacanam/trutix-p2p-contracts
@@ -104,13 +81,59 @@ npm install
 npx hardhat compile
 ```
 
+Create a `.env` file with the following:
+
+```env
+PRIVATE_KEY_SELLER=0x...
+PRIVATE_KEY_BUYER=0x...
+BASE_RPC_URL=https://sepolia.base.org
+MOCK_USDC_ADDRESS=0x...
+TRADE_ESCROW_ADDRESS=0x...
+```
+
+---
+
+## 🧪 Testnet Scripts
+
+Run using:
+
+```bash
+npx tsx scripts/testnet/<script>.ts
+```
+
+### 🔧 Setup
+
+- `deploy.ts` → deploys MockUSDC and TradeEscrow to Base Sepolia
+- `checkDecimals.ts` → verifies token decimals
+
+### 💼 Seller actions
+
+- `createTrade.ts`
+- `markAsSent.ts`
+
+### 💸 Buyer actions
+
+- `payTrade.ts`
+- `confirmReception.ts`
+- `disputeTrade.ts`
+
+### 👨‍⚖️ Admin actions
+
+- `resolveDispute.ts`
+- `withdrawFees.ts`
+
+### ⏳ Time-based
+
+- `expireTrade.ts`
+
 ---
 
 ## 📁 File Structure
 
 - `/contracts/TradeEscrow.sol` – main contract
-- `/contracts/MockUSDC.sol` – test token used for unit testing
-- `/test/TradeEscrow.test.js` – full test suite
+- `/contracts/MockUSDC.sol` – test token (6 decimals)
+- `/scripts/testnet/` – call scripts simulating real users
+- `/test/` – full test suite using Hardhat and Chai
 
 ---
 
