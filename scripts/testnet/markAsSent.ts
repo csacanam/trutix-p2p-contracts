@@ -14,7 +14,7 @@ async function main() {
     seller
   );
 
-  const tradeId = 1; // Update if you're marking another trade
+  const tradeId = 4; // Update if you're marking another trade
 
   console.log(`📤 Marking trade #${tradeId} as sent...`);
   const tx = await tradeEscrow.markAsSent(tradeId);

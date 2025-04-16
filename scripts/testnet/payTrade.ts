@@ -19,7 +19,7 @@ async function main() {
     buyer
   );
 
-  const tradeId = 1; // Update this if you want to pay a different trade
+  const tradeId = 4; // Update this if you want to pay a different trade
 
   // Retrieve trade data to calculate the full payment amount including fee
   const trade = await tradeEscrow.getTrade(tradeId);
