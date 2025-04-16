@@ -13,7 +13,7 @@ async function main() {
     someone // Anyone can call expireTrade
   );
 
-  const tradeId = 1; // Change if testing other trades
+  const tradeId = 4; // Change if testing other trades
 
   console.log(`🕒 Attempting to expire trade #${tradeId}...`);
 

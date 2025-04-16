@@ -13,7 +13,7 @@ async function main() {
     signer
   );
 
-  const tradeId = 4; 
+  const tradeId = 2; 
   const trade = await tradeEscrow.getTrade(tradeId);
 
   const statusMap: Record<number, string> = {
