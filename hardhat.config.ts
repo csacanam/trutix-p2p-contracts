@@ -21,6 +21,10 @@ const config: HardhatUserConfig = {
       url: process.env.BASE_RPC_URL,
       accounts: [PRIVATE_KEY],
     },
+    base: {
+      url: process.env.BASE_MAINNET_RPC_URL,
+      accounts: [PRIVATE_KEY],
+    },
   },
   typechain: {
     outDir: "typechain-types",
